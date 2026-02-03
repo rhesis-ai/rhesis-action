@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Rhesis Tests
         id: rhesis
-        uses: rhesis-ai/rhesis-action@v1
+        uses: rhesis-ai/rhesis-action@main
         with:
           api-key: ${{ secrets.RHESIS_API_KEY }}
           endpoint-name: ${{ env.RHESIS_ENDPOINT_NAME }}
