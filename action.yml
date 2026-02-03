@@ -1,0 +1,82 @@
+name: 'Rhesis LLM Testing'
+description: 'Run Rhesis test sets against your LLM endpoints in CI/CD pipelines'
+author: 'Rhesis AI'
+
+branding:
+  icon: 'check-circle'
+  color: 'purple'
+
+inputs:
+  api-key:
+    description: 'Rhesis API key'
+    required: true
+  endpoint-name:
+    description: 'Name of the endpoint to test'
+    required: true
+  test-set-name:
+    description: 'Name of the test set to run'
+    required: true
+  base-url:
+    description: 'Rhesis API base URL (for self-hosted instances)'
+    required: false
+    default: ''
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.11'
+  poll-timeout:
+    description: 'Timeout in seconds for polling test run to appear'
+    required: false
+    default: '600'
+  completion-timeout:
+    description: 'Timeout in seconds for test run completion'
+    required: false
+    default: '1800'
+
+outputs:
+  total:
+    description: 'Total number of tests'
+    value: ${{ steps.run-tests.outputs.total }}
+  passed:
+    description: 'Number of passed tests'
+    value: ${{ steps.run-tests.outputs.passed }}
+  failed:
+    description: 'Number of failed tests'
+    value: ${{ steps.run-tests.outputs.failed }}
+  success-rate:
+    description: 'Test success rate percentage'
+    value: ${{ steps.run-tests.outputs.success_rate }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Rhesis SDK
+      shell: bash
+      run: |
+        pip install rhesis-sdk
+
+    - name: Run Rhesis Tests
+      id: run-tests
+      shell: bash
+      env:
+        RHESIS_API_KEY: ${{ inputs.api-key }}
+        RHESIS_ENDPOINT_NAME: ${{ inputs.endpoint-name }}
+        RHESIS_TEST_SET_NAME: ${{ inputs.test-set-name }}
+        RHESIS_BASE_URL: ${{ inputs.base-url }}
+        RHESIS_POLL_TIMEOUT: ${{ inputs.poll-timeout }}
+        RHESIS_COMPLETION_TIMEOUT: ${{ inputs.completion-timeout }}
+      run: python ${{ github.action_path }}/run_rhesis_tests.py
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: rhesis-test-results
+        path: test-results.json
+        retention-days: 30
+        if-no-files-found: ignore
