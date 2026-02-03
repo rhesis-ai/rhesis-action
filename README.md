@@ -35,6 +35,7 @@ jobs:
           endpoint-name: ${{ env.RHESIS_ENDPOINT_NAME }}
           test-set-name: ${{ env.RHESIS_TEST_SET_NAME }}
           base-url: 'https://api.rhesis.ai'  # Optional: defaults to Rhesis cloud
+          success-threshold: '90'  # Optional: fail if success rate is below 90%
 
       - name: Report Results
         if: always()
@@ -60,6 +61,7 @@ jobs:
 | `python-version` | Python version to use | No | `3.11` |
 | `poll-timeout` | Timeout in seconds for test run to appear | No | `600` |
 | `completion-timeout` | Timeout in seconds for test completion | No | `1800` |
+| `success-threshold` | Minimum success rate percentage required to pass (0-100) | No | `100` |
 
 ## Outputs
 

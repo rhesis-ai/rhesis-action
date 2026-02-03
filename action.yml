@@ -32,6 +32,10 @@ inputs:
     description: 'Timeout in seconds for test run completion'
     required: false
     default: '1800'
+  success-threshold:
+    description: 'Minimum success rate percentage required to pass (0-100)'
+    required: false
+    default: '100'
 
 outputs:
   total:
@@ -70,6 +74,7 @@ runs:
         RHESIS_BASE_URL: ${{ inputs.base-url }}
         RHESIS_POLL_TIMEOUT: ${{ inputs.poll-timeout }}
         RHESIS_COMPLETION_TIMEOUT: ${{ inputs.completion-timeout }}
+        RHESIS_SUCCESS_THRESHOLD: ${{ inputs.success-threshold }}
       run: python ${{ github.action_path }}/run_rhesis_tests.py
 
     - name: Upload Test Results

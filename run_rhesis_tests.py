@@ -142,6 +142,7 @@ def main():
     test_set_name = os.getenv("RHESIS_TEST_SET_NAME")
     poll_timeout = int(os.getenv("RHESIS_POLL_TIMEOUT", "600"))
     completion_timeout = int(os.getenv("RHESIS_COMPLETION_TIMEOUT", "1800"))
+    success_threshold = float(os.getenv("RHESIS_SUCCESS_THRESHOLD", "100"))
 
     if not endpoint_name or not test_set_name:
         print("❌ Error: RHESIS_ENDPOINT_NAME and RHESIS_TEST_SET_NAME must be set")
@@ -188,15 +189,15 @@ def main():
         set_github_output("failed", summary["failed"])
         set_github_output("success_rate", f"{summary['success_rate']:.1f}")
 
-        # Step 7: Check for failures
-        if summary["failed"] > 0:
+        # Step 7: Check against threshold
+        if summary["success_rate"] < success_threshold:
             print("\n❌ CI/CD PIPELINE FAILED")
             print(f"   {summary['failed']}/{summary['total']} tests failed")
-            print(f"   Success rate: {summary['success_rate']:.1f}% (Required: 100%)")
+            print(f"   Success rate: {summary['success_rate']:.1f}% (Required: {success_threshold:.1f}%)")
             sys.exit(1)
 
         print("\n✅ CI/CD PIPELINE PASSED")
-        print(f"   All {summary['total']} tests passed!")
+        print(f"   Success rate: {summary['success_rate']:.1f}% (Threshold: {success_threshold:.1f}%)")
         sys.exit(0)
 
     except Exception as e:
