@@ -21,9 +21,9 @@ inputs:
     required: false
     default: ''
   python-version:
-    description: 'Python version to use'
+    description: 'Python version to use (3.12 or newer, which the Rhesis SDK requires)'
     required: false
-    default: '3.11'
+    default: '3.12'
   poll-timeout:
     description: 'Timeout in seconds for polling test run to appear'
     required: false
@@ -59,10 +59,12 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
+    # Pinned so a Python too old for the SDK fails here instead of silently
+    # installing a months-old release that still supports it.
     - name: Install Rhesis SDK
       shell: bash
       run: |
-        pip install rhesis-sdk
+        pip install "rhesis-sdk>=0.17.1,<0.19"
 
     - name: Run Rhesis Tests
       id: run-tests
