@@ -58,7 +58,7 @@ jobs:
 | `endpoint-name` | Name of the endpoint to test | Yes | - |
 | `test-set-name` | Name of the test set to run | Yes | - |
 | `base-url` | Rhesis API base URL (for self-hosted) | No | - |
-| `python-version` | Python version to use | No | `3.11` |
+| `python-version` | Python version to use (3.12 or newer) | No | `3.12` |
 | `poll-timeout` | Timeout in seconds for test run to appear | No | `600` |
 | `completion-timeout` | Timeout in seconds for test completion | No | `1800` |
 | `success-threshold` | Minimum success rate percentage required to pass (0-100) | No | `100` |
